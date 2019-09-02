@@ -15,7 +15,8 @@ jobs:
   clippy:
     runs-on: ubuntu-latest
     steps:
-      - uses: hecrj/setup-rust-action@master
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@master
       - uses: actions/checkout@master
       - run: rustup component add clippy
       - run: cargo clippy --all-targets --all-features -- -D clippy::all
@@ -45,3 +46,23 @@ jobs:
       uses: actions/checkout@v1
     - name: Test
       run: cargo test --verbose
+
+  release:
+    needs: [test]
+    strategy:
+      matrix:
+        rust: [nightly]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Setup Rust
+      uses: hecrj/setup-rust-action@master
+      with:
+        rust-version: ${{ matrix.rust }}
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Package
+      run: echo "package for ${{ matrix.os }}"
+    - name: Package
+      run: echo "release for ${{ matrix.os }}"
