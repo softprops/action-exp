@@ -63,15 +63,17 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
     - name: Install Cross
-      run: cargo install --git https://github.com/rust-embedded/cross
-    - run: cross build --target x86_64-unknown-linux-musl --release
-      name: Package
+      run: |
+        cargo install --git https://github.com/rust-embedded/cross
+        export PATH="$HOME/.cargo/bin:$PATH"
+    - name: Package Linux
       if: matrix.os == 'ubuntu-latest'
-    - run: cross build --target x86_64-apple-darwin--release
-      name: Package
+      run: cross build --target x86_64-unknown-linux-musl --release
+    - name: Package OSX
       if: matrix.os == 'macOS-latest'
-    - run: cross build --target x86_64-pc-windows-msvc --release
-      name: Package
+      run: cross build --target x86_64-apple-darwin--release
+    - name: Package Windows
       if: matrix.os == 'windows-latest'
+      run: cross build --target x86_64-pc-windows-msvc --release
     - name: Package
       run: echo "release for ${{ matrix.os }}"
