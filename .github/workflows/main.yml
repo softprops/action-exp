@@ -86,17 +86,30 @@ jobs:
       if: matrix.os == 'macOS-latest'
       run: |
         echo packaging osx
-        ls -al target/release
         which tar || echo "no tar"
+        tag=test
+        bin=action-exp
+        ls -al target/release
+        name="$bin-$tag-Darwin-x86_64"
+        src=$(pwd)
+        mkdir $name
+        strip target/release/$bin
+        cp target/release/$bin $name/
+        cd $name
+        tar czvf $src/$name.tar.gz *
+        cd $src
+        rm -rf $name
     - name: Package Windows
       if: matrix.os == 'windows-latest'
       run: |
         echo packaging windows
         ls -al target/release
-         which tar || echo "no tar"
+        which tar || echo "no tar"
+        tar czf $src/$CRATE_NAME-$TRAVIS_TAG-$TARGET.tar.gz *
     - name: Package Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
         echo packaging linux
         ls -al target/release
         which tar || echo "no tar"
+        tar czf $src/$CRATE_NAME-$TRAVIS_TAG-$TARGET.tar.gz *
