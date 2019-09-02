@@ -3,7 +3,33 @@ name: Main
 on: push
 
 jobs:
-  build:
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@master
+      - uses: actions/checkout@master
+      - run: rustup component add rustfmt
+      - run: cargo fmt --all -- --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hecrj/setup-rust-action@master
+      - uses: actions/checkout@master
+      - run: rustup component add clippy
+      - run: cargo clippy --all-targets --all-features -- -D clippy::all
+
+  cargo_check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rust
+        uses: hecrj/setup-rust-action@master
+      - uses: actions/checkout@master
+      - run: cargo check --all
+
+  test:
+    needs: [rustfmt, clippy, cargo_check]
     strategy:
       matrix:
         rust: [nightly]
@@ -11,15 +37,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: hecrj/setup-rust-action@master
+    - name: Setup Rust
+      uses: hecrj/setup-rust-action@master
       with:
         rust-version: ${{ matrix.rust }}
-    - uses: actions/checkout@v1
-    - name: Components
-      run: rustup component add clippy
-    - name: Build
-      run: cargo build --verbose
-    - name: Clippy
-      run: cargo clippy -- -D warnings
-    - name: Run tests
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Test
       run: cargo test --verbose
