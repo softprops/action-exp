@@ -51,11 +51,15 @@ jobs:
     needs: [test]
     strategy:
       matrix:
+        # The docs seem to suggest that we can have a matrix with just an
+        # include directive, but it result in a "matrix must define at least
+        # one vector" error in the CI system.
+        os: [ubuntu-latest, windows-2019, macOS-latest]
         include:
           - os: ubuntu-latest
             rust: stable
             target: x86_64-unknown-linux-musl
-          - os: windows-latest
+          - os: windows-2019
             rust: stable
             target: x86_64-pc-windows-msvc
           - os: macOS-latest
