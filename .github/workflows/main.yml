@@ -66,8 +66,6 @@ jobs:
       run: rustup show
     - name: Build
       run: cargo build --release
-    - name: Debug
-      run: ls -al target/release
     #- name: Install Cross
     #  run: |
     #    cargo install --git https://github.com/rust-embedded/cross
@@ -84,5 +82,21 @@ jobs:
     #  if: matrix.os == 'macOS-latest'
       #run: $HOME/.cargo/bin/cross build --target x86_64-apple-darwin --release
     #  run: cargo build --release
-    - name: Package
-      run: echo "release for ${{ matrix.os }}"
+    - name: Package OSX
+      if: matrix.os == 'macOS-latest'
+      run: |
+        echo packaging osx
+        ls -al target/release
+        which tar || echo "no tar"
+    - name: Package Windows
+      if: matrix.os == 'windows-latest'
+      run: |
+        echo packaging windows
+        ls -al target/release
+         which tar || echo "no tar"
+    - name: Package Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        echo packaging linux
+        ls -al target/release
+        which tar || echo "no tar"
