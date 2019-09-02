@@ -54,12 +54,12 @@ jobs:
         # The docs seem to suggest that we can have a matrix with just an
         # include directive, but it result in a "matrix must define at least
         # one vector" error in the CI system.
-        os: [ubuntu-latest, windows-2019, macOS-latest]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
         include:
           - os: ubuntu-latest
             rust: stable
             target: x86_64-unknown-linux-musl
-          - os: windows-2019
+          - os: windows-latest
             rust: stable
             target: x86_64-pc-windows-msvc
           - os: macOS-latest
@@ -73,10 +73,10 @@ jobs:
         rust-version: ${{ matrix.rust }}
     - name: Configure Rustup
       run: rustup target add ${{ matrix.target }}
-    - name: Checkout
-      uses: actions/checkout@v1
     - name: Show Rustup
       run: rustup show
+    - name: Checkout
+      uses: actions/checkout@v1
     - name: Build
       run: cargo build --release --target ${{ matrix.target }}
     #- name: Install Cross
@@ -102,7 +102,7 @@ jobs:
         which tar || echo "no tar"
         tag=test
         bin=action-exp
-        ls -al target/${{ matrix.target }}/release
+        ls -alh target/${{ matrix.target }}/release
         name="$bin-$tag-Darwin-x86_64"
         src=$(pwd)
         mkdir $name
@@ -112,18 +112,18 @@ jobs:
         tar czvf $src/$name.tar.gz *
         cd $src
         rm -rf $name
-        ls -ah $name.tar.gz
+        ls -alh $name.tar.gz
     - name: Package Windows
       if: matrix.os == 'windows-latest'
       run: |
         echo packaging windows
-        ls -al target/${{ matrix.target }}/release
+        ls -alh target/${{ matrix.target }}/release
         which tar || echo "no tar"
     - name: Package Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
         echo packaging linux
-        ls -al target/${{ matrix.target }}/release
+        ls -alh target/${{ matrix.target }}/release
         which tar || echo "no tar"
         tag=test
         bin=action-exp
@@ -136,4 +136,4 @@ jobs:
         tar czvf $src/$name.tar.gz *
         cd $src
         rm -rf $name
-        ls -ah $name.tar.gz
+        ls -alh $name.tar.gz
