@@ -62,6 +62,8 @@ jobs:
         rust-version: ${{ matrix.rust }}
     - name: Checkout
       uses: actions/checkout@v1
+    - name: Show Rustup
+      run: rustup show
     - name: Build
       run: cargo build --release
     - name: Debug
