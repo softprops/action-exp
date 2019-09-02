@@ -51,21 +51,30 @@ jobs:
     needs: [test]
     strategy:
       matrix:
-        rust: [stable]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            rust: stable
+            target: x86_64-unknown-linux-musl
+          - os: windows-latest
+            rust: stable
+            target: x86_64-pc-windows-msvc
+          - os: macOS-latest
+            rust: stable
+            target: x86_64-apple-darwin
     runs-on: ${{ matrix.os }}
-
     steps:
     - name: Setup Rust
       uses: hecrj/setup-rust-action@master
       with:
         rust-version: ${{ matrix.rust }}
+    - name: Configure Rustup
+      runs: rustup target add ${{ matrix.target }}
     - name: Checkout
       uses: actions/checkout@v1
     - name: Show Rustup
       run: rustup show
     - name: Build
-      run: cargo build --release
+      run: cargo build --release --target ${{ matrix.target }}
     #- name: Install Cross
     #  run: |
     #    cargo install --git https://github.com/rust-embedded/cross
@@ -89,37 +98,38 @@ jobs:
         which tar || echo "no tar"
         tag=test
         bin=action-exp
-        ls -al target/release
+        ls -al target/${{ matrix.target }}/release
         name="$bin-$tag-Darwin-x86_64"
         src=$(pwd)
         mkdir $name
-        strip target/release/$bin
-        cp target/release/$bin $name/
+        strip target/${{ matrix.target }}/release/$bin
+        cp target/${{ matrix.target }}/release/$bin $name/
         cd $name
         tar czvf $src/$name.tar.gz *
         cd $src
         rm -rf $name
+        ls -ah $name.tar.gz
     - name: Package Windows
       if: matrix.os == 'windows-latest'
       run: |
         echo packaging windows
-        ls -al target/release
+        ls -al target/${{ matrix.target }}/release
         which tar || echo "no tar"
     - name: Package Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
         echo packaging linux
-        ls -al target/release
+        ls -al target/${{ matrix.target }}/release
         which tar || echo "no tar"
         tag=test
         bin=action-exp
-        ls -al target/release
         name="$bin-$tag-Darwin-x86_64"
         src=$(pwd)
         mkdir $name
-        strip target/release/$bin
-        cp target/release/$bin $name/
+        strip target/${{ matrix.target }}/release/$bin
+        cp target/${{ matrix.target }}/release/$bin $name/
         cd $name
         tar czvf $src/$name.tar.gz *
         cd $src
         rm -rf $name
+        ls -ah $name.tar.gz
