@@ -71,7 +71,7 @@ jobs:
       run: $HOME/.cargo/bin/cross build --target x86_64-unknown-linux-musl --release
     - name: Package OSX
       #if: matrix.os == 'macOS-latest'
-      run: $HOME/.cargo/bin/cross build --target x86_64-apple-darwin--release
+      run: $HOME/.cargo/bin/cross build --target x86_64-apple-darwin --release
     - name: Package Windows
       #if: matrix.os == 'windows-latest'
       run: $HOME/.cargo/bin/cross build --target x86_64-pc-windows-msvc --release
