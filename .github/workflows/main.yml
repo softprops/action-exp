@@ -119,6 +119,18 @@ jobs:
         echo packaging windows
         ls -alh target/${{ matrix.target }}/release
         which tar || echo "no tar"
+        tag=test
+        bin=action-exp.exe
+        name="$bin-$tag-Windows-x86_64"
+        src=$(pwd)
+        mkdir $name
+        strip target/${{ matrix.target }}/release/$bin
+        cp target/${{ matrix.target }}/release/$bin $name/
+        cd $name
+        tar czvf $src/$name.tar.gz *
+        cd $src
+        rm -rf $name
+        ls -alh $name.tar.gz
     - name: Package Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
