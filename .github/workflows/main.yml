@@ -142,7 +142,7 @@ jobs:
         which strip || echo "no strip"
         tag=test
         bin=action-exp
-        name="$bin-$tag-Darwin-x86_64"
+        name="$bin-$tag-Linux-x86_64"
         src=$(pwd)
         mkdir $name
         strip target/${{ matrix.target }}/release/$bin
