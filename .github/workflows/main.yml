@@ -3,52 +3,52 @@ name: Main
 on: push
 
 jobs:
-  rustfmt:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Rust
-        uses: hecrj/setup-rust-action@master
-      - uses: actions/checkout@master
-      - run: rustup component add rustfmt
-      - run: cargo fmt --all -- --check
+  # rustfmt:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Rust
+  #       uses: hecrj/setup-rust-action@master
+  #     - uses: actions/checkout@master
+  #     - run: rustup component add rustfmt
+  #     - run: cargo fmt --all -- --check
 
-  clippy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Rust
-        uses: hecrj/setup-rust-action@master
-      - uses: actions/checkout@master
-      - run: rustup component add clippy
-      - run: cargo clippy --all-targets --all-features -- -D clippy::all
+  # clippy:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Rust
+  #       uses: hecrj/setup-rust-action@master
+  #     - uses: actions/checkout@master
+  #     - run: rustup component add clippy
+  #     - run: cargo clippy --all-targets --all-features -- -D clippy::all
 
-  cargo_check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Rust
-        uses: hecrj/setup-rust-action@master
-      - uses: actions/checkout@master
-      - run: cargo check --all
+  # cargo_check:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup Rust
+  #       uses: hecrj/setup-rust-action@master
+  #     - uses: actions/checkout@master
+  #     - run: cargo check --all
 
-  test:
-    needs: [rustfmt, clippy, cargo_check]
-    strategy:
-      matrix:
-        rust: [stable]
-        os: [ubuntu-latest] #, windows-latest, macOS-latest]
-    runs-on: ${{ matrix.os }}
+  # test:
+  #   needs: [rustfmt, clippy, cargo_check]
+  #   strategy:
+  #     matrix:
+  #       rust: [stable]
+  #       os: [ubuntu-latest] #, windows-latest, macOS-latest]
+  #   runs-on: ${{ matrix.os }}
 
-    steps:
-    - name: Setup Rust
-      uses: hecrj/setup-rust-action@master
-      with:
-        rust-version: ${{ matrix.rust }}
-    - name: Checkout
-      uses: actions/checkout@v1
-    - name: Test
-      run: cargo test --verbose
+  #   steps:
+  #   - name: Setup Rust
+  #     uses: hecrj/setup-rust-action@master
+  #     with:
+  #       rust-version: ${{ matrix.rust }}
+  #   - name: Checkout
+  #     uses: actions/checkout@v1
+  #   - name: Test
+  #     run: cargo test --verbose
 
   release:
-    needs: [test]
+    #needs: [test]
     strategy:
       matrix:
         # The docs seem to suggest that we can have a matrix with just an
