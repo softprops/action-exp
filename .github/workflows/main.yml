@@ -100,6 +100,7 @@ jobs:
       run: |
         echo packaging osx
         which tar || echo "no tar"
+        which strip || echo "no strip"
         tag=test
         bin=action-exp
         ls -alh target/${{ matrix.target }}/release
@@ -119,6 +120,7 @@ jobs:
         echo packaging windows
         ls -alh target/${{ matrix.target }}/release
         which tar || echo "no tar"
+        which strip || echo "no strip"
         tag=test
         bin=action-exp.exe
         name="$bin-$tag-Windows-x86_64"
@@ -137,6 +139,7 @@ jobs:
         echo packaging linux
         ls -alh target/${{ matrix.target }}/release
         which tar || echo "no tar"
+        which strip || echo "no strip"
         tag=test
         bin=action-exp
         name="$bin-$tag-Darwin-x86_64"
