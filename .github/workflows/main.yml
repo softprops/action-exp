@@ -54,23 +54,23 @@ jobs:
         # The docs seem to suggest that we can have a matrix with just an
         # include directive, but it result in a "matrix must define at least
         # one vector" error in the CI system.
-        os: [ubuntu-latest, macOS-latest] #windows-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
         include:
           - os: ubuntu-latest
             rust: stable
             target: x86_64-unknown-linux-musl
             bin: action-exp
-            name: action-exp-Linux-x86_64
-          # - os: windows-latest
-          #   rust: stable
-          #   target: x86_64-pc-windows-msvc
-          #   bin: action-exp.exe
-          #   name: action-exp-Windows-x86_64
+            name: action-exp-Linux-x86_64.zip
+          - os: windows-latest
+            rust: stable
+            target: x86_64-pc-windows-msvc
+            bin: action-exp.exe
+            name: action-exp-Windows-x86_64.zip
           - os: macOS-latest
             rust: stable
             target: x86_64-apple-darwin
             bin: action-exp
-            name: action-exp-Darwin-x86_64
+            name: action-exp-Darwin-x86_64.zip
     runs-on: ${{ matrix.os }}
     steps:
     - name: Setup Rust
@@ -85,6 +85,21 @@ jobs:
       uses: actions/checkout@v1
     - name: Build
       run: cargo build --release --target ${{ matrix.target }}
+    - name: Trim
+      shell: bash
+      run:  strip target/${{ matrix.target }}/release/${{ matrix.bin }}
+    - name: Package
+      shell: bash
+      run: |
+        echo "Setting exec permissions"
+        chmod +x ./target/release/${{ matrix.artifact_name }}
+        echo "Zipping"
+        if [[ "${{matrix.os}}" == "macOS-latest" ]]
+        then
+          zip ${{matrix.name}} target/${{ matrix.target }}/release/${{ matrix.bin }}
+        else
+          7z a ${{matrix.name}} target/${{ matrix.target }}/release/${{ matrix.bin }}
+        fi
     #- name: Install Cross
     #  run: |
     #    cargo install --git https://github.com/rust-embedded/cross
@@ -101,47 +116,47 @@ jobs:
     #  if: matrix.os == 'macOS-latest'
       #run: $HOME/.cargo/bin/cross build --target x86_64-apple-darwin --release
     #  run: cargo build --release
-    - name: Package OSX
-      if: matrix.os == 'macOS-latest'
-      run: |
-        echo packaging osx
-        src=$(pwd)
-        mkdir ${{ matrix.name }}
-        artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
-        strip $artifact
-        cp $artifact ${{ matrix.name }}/
-        cd ${{ matrix.name }}
-        tar czvf $src/${{ matrix.name }}.tar.gz *
-        cd $src
-        rm -rf ${{ matrix.name }}
-    - name: Package Windows
-      if: matrix.os == 'windows-latest'
-      #shell: pwsh
-      run: |
-        echo packaging windows
-        ls -alh target/${{ matrix.target }}/release
-        src=${PWD}
-        mkdir ${{ matrix.name }}
-        artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
-        strip ${artifact}
-        cd ${{ matrix.name }}
-        tar czvf $src/${{ matrix.name }}.tar.gz *
-        cd $src
-        rm -rf ${{ matrix.name }}
-    - name: Package Linux
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        echo packaging linux
-        src=$(pwd)
-        mkdir ${{ matrix.name }}
-        artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
-        strip $artifact
-        cp $artifact ${{ matrix.name }}/
-        cd ${{ matrix.name }}
-        tar czvf $src/${{ matrix.name }}.tar.gz *
-        cd $src
-        rm -rf ${{ matrix.name }}
-    # - name: Release
+    # - name: Package OSX
+    #   if: matrix.os == 'macOS-latest'
+    #   run: |
+    #     echo packaging osx
+    #     src=$(pwd)
+    #     mkdir ${{ matrix.name }}
+    #     artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
+    #     strip $artifact
+    #     cp $artifact ${{ matrix.name }}/
+    #     cd ${{ matrix.name }}
+    #     tar czvf $src/${{ matrix.name }}.tar.gz *
+    #     cd $src
+    #     rm -rf ${{ matrix.name }}
+    # - name: Package Windows
+    #   if: matrix.os == 'windows-latest'
+    #   #shell: pwsh
+    #   run: |
+    #     echo packaging windows
+    #     ls -alh target/${{ matrix.target }}/release
+    #     src=${PWD}
+    #     mkdir ${{ matrix.name }}
+    #     artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
+    #     strip ${artifact}
+    #     cd ${{ matrix.name }}
+    #     tar czvf $src/${{ matrix.name }}.tar.gz *
+    #     cd $src
+    #     rm -rf ${{ matrix.name }}
+    # - name: Package Linux
+    #   if: matrix.os == 'ubuntu-latest'
+    #   run: |
+    #     echo packaging linux
+    #     src=$(pwd)
+    #     mkdir ${{ matrix.name }}
+    #     artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
+    #     strip $artifact
+    #     cp $artifact ${{ matrix.name }}/
+    #     cd ${{ matrix.name }}
+    #     tar czvf $src/${{ matrix.name }}.tar.gz *
+    #     cd $src
+    #     rm -rf ${{ matrix.name }}
+    # # - name: Release
     #   run: ls -ah action-exp*.tar.gz
     - name: Release
       uses: softprops/action-gh-release@cross-platform
