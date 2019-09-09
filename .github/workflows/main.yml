@@ -90,12 +90,14 @@ jobs:
       run: |
         ls -al target/${{ matrix.target }}/release/${{ matrix.bin }}
         strip target/${{ matrix.target }}/release/${{ matrix.bin }}
+        cd target/${{ matrix.target }}/release
         if [[ "${{matrix.os}}" == "windows-latest" ]]
         then
-          cd target/${{ matrix.target }}/release && 7z a ../../../${{matrix.name}} ${{ matrix.bin }} && cd -
+          7z a ../../../${{matrix.name}} ${{ matrix.bin }}
         else
-          cd target/${{ matrix.target }}/release && tar czvf ../../../${{matrix.name}} ${{ matrix.bin }} && cd -
+          tar czvf ../../../${{matrix.name}} ${{ matrix.bin }}
         fi
+        cd -
         ls -al ${{matrix.name}}
     - name: Publish
       uses: softprops/action-gh-release@cross-platform
