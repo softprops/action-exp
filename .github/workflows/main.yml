@@ -89,6 +89,7 @@ jobs:
       shell: bash
       run: |
         strip target/${{ matrix.target }}/release/${{ matrix.bin }}
+        ls -al target/${{ matrix.target }}/release/${{ matrix.bin }}
         echo "Setting exec permissions"
         chmod +x target/${{ matrix.target }}/release/${{ matrix.bin }}
         echo "Zipping"
