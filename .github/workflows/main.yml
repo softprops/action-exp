@@ -88,6 +88,7 @@ jobs:
     - name: Package
       shell: bash
       run: |
+        ls -al target/${{ matrix.target }}/release/${{ matrix.bin }}
         strip target/${{ matrix.target }}/release/${{ matrix.bin }}
         if [[ "${{matrix.os}}" == "windows-latest" ]]
         then
