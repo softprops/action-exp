@@ -89,11 +89,11 @@ jobs:
       shell: bash
       run: |
         strip target/${{ matrix.target }}/release/${{ matrix.bin }}
-        if [[ "${{matrix.os}}" == "macOS-latest" ]]
+        if [[ "${{matrix.os}}" == "windows-latest" ]]
         then
-          zip ${{matrix.name}} target/${{ matrix.target }}/release/${{ matrix.bin }}
-        else
           7z a ${{matrix.name}} target/${{ matrix.target }}/release/${{ matrix.bin }}
+        else
+          cd target/${{ matrix.target }}/release && tar -zcvf ../${{matrix.name}} ${{ matrix.bin }} && cd -
         fi
     #- name: Install Cross
     #  run: |
