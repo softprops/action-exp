@@ -100,7 +100,7 @@ jobs:
         cd -
         ls -al ${{matrix.name}}
     - name: Publish
-      uses: softprops/action-gh-release@cross-platform
+      uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
           files: 'action-exp*'
