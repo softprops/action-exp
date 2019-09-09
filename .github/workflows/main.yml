@@ -54,7 +54,7 @@ jobs:
         # The docs seem to suggest that we can have a matrix with just an
         # include directive, but it result in a "matrix must define at least
         # one vector" error in the CI system.
-        os: [ubuntu-latest] #, macOS-latest, windows-latest]
+        os: [ubuntu-latest, macOS-latest] #, windows-latest]
         include:
           - os: ubuntu-latest
             rust: stable
@@ -66,11 +66,11 @@ jobs:
           #   target: x86_64-pc-windows-msvc
           #   bin: action-exp.exe
           #   name: action-exp-Windows-x86_64.zip
-          # - os: macOS-latest
-          #   rust: stable
-          #   target: x86_64-apple-darwin
-          #   bin: action-exp
-          #   name: action-exp-Darwin-x86_64.tar.gz
+          - os: macOS-latest
+            rust: stable
+            target: x86_64-apple-darwin
+            bin: action-exp
+            name: action-exp-Darwin-x86_64.tar.gz
     runs-on: ${{ matrix.os }}
     steps:
     - name: Setup Rust
