@@ -157,6 +157,6 @@ jobs:
       uses: softprops/action-gh-release@cross-platform
       if: startsWith(github.ref, 'refs/tags/')
       with:
-          files: 'action-exp*.tar.gz'
+          files: 'action-exp*'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
