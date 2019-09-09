@@ -95,6 +95,7 @@ jobs:
         else
           cd target/${{ matrix.target }}/release && tar -zcvf ../${{matrix.name}} ${{ matrix.bin }} && cd -
         fi
+        ls -al ${{matrix.name}}
     #- name: Install Cross
     #  run: |
     #    cargo install --git https://github.com/rust-embedded/cross
