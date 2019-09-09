@@ -94,7 +94,7 @@ jobs:
         then
           7z a ${{matrix.name}} target/${{ matrix.target }}/release/${{ matrix.bin }}
         else
-          cd target/${{ matrix.target }}/release && tar czvf ../${{matrix.name}} ${{ matrix.bin }} && cd -
+          cd target/${{ matrix.target }}/release && tar czvf ../../../${{matrix.name}} ${{ matrix.bin }} && cd -
         fi
         ls -al ${{matrix.name}}
     - name: Publish
