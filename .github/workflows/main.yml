@@ -54,7 +54,7 @@ jobs:
         # The docs seem to suggest that we can have a matrix with just an
         # include directive, but it result in a "matrix must define at least
         # one vector" error in the CI system.
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest]#windows-latest, macOS-latest]
         include:
           - os: ubuntu-latest
             rust: stable
@@ -116,16 +116,18 @@ jobs:
         rm -rf ${{ matrix.name }}
     - name: Package Windows
       if: matrix.os == 'windows-latest'
-      shell: powershell
+      #shell: pwsh
       run: |
         echo packaging windows
         ls -alh target/${{ matrix.target }}/release
-        New-Item -Path ${{ matrix.name }} -ItemType directory
-        strip target/${{ matrix.target }}/release/${{ matrix.bin }}
-        Copy-Item target/release/${{ matrix.bin }} "${NAME}/"
-        7z a -ttar "${{ matrix.name }}.tar" "${{ matrix.name }}"
-        7z a "${{ matrix.name }}.tar.gz" "${{ matrix.name }}.tar"
-        ls -alh ${{ matrix.name }}.tar.gz
+        src=${PWD}
+        mkdir ${{ matrix.name }}
+        artifact=target/${{ matrix.target }}/release/${{ matrix.bin }}
+        strip ${artifact}
+        cd ${{ matrix.name }}
+        tar czvf $src/${{ matrix.name }}.tar.gz *
+        cd $src
+        rm -rf ${{ matrix.name }}
     - name: Package Linux
       if: matrix.os == 'ubuntu-latest'
       run: |
@@ -141,10 +143,10 @@ jobs:
         rm -rf ${{ matrix.name }}
     - name: Release
       run: ls -ah action-exp*.tar.gz
-    # - name: Release
-    #   uses: docker://softprops/action-gh-release
-    #   if: startsWith(github.ref, 'refs/tags/')
-    #   with:
-    #       files: 'action-exp*.tar.gz'
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
+      uses: softprops/action-gh-release@cross-platform
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+          files: 'action-exp*.tar.gz'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
