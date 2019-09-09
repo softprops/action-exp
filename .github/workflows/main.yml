@@ -92,7 +92,7 @@ jobs:
         strip target/${{ matrix.target }}/release/${{ matrix.bin }}
         if [[ "${{matrix.os}}" == "windows-latest" ]]
         then
-          7z a ${{matrix.name}} target/${{ matrix.target }}/release/${{ matrix.bin }}
+          cd target/${{ matrix.target }}/release && 7z a ../../../${{matrix.name}} ${{ matrix.bin }} && cd -
         else
           cd target/${{ matrix.target }}/release && tar czvf ../../../${{matrix.name}} ${{ matrix.bin }} && cd -
         fi
